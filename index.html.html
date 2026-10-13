@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tantangan Penjaga Budaya - Game Kelas 4</title>
+<style>
+:root{
+  --green:#1B4D2E; --green2:#2E7D32; --red:#B3261E; --gold:#E0A526; --brown:#6B3A1E;
+  --blue:#1F6F8B; --purple:#7B3F8C; --cream:#FBF4E4; --ink:#222; --white:#fff;
+  --bg:#FFFFFF; --card:#FBF4E4; --muted:#666;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#14261b; --card:#1f3a2a; --ink:#f3efe3; --muted:#b9c9bd; --white:#fff; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Calibri,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:18px;line-height:1.35}
+h1,h2,h3{font-family:Cambria,Georgia,serif;margin:0}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.hidden{display:none!important}
+
+/* start */
+.hero{background:var(--green);color:#fff;border-radius:22px;padding:28px;margin-top:8px}
+.hero h1{font-size:2.2rem;line-height:1.1}
+.hero p{color:#e6efe8;margin:.5rem 0 0}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px}
+.panel h2{font-size:1.3rem;color:var(--green2);margin-bottom:10px}
+@media (prefers-color-scheme: dark){.panel h2{color:#9fd3a4}}
+.count{display:flex;gap:10px;flex-wrap:wrap}
+.count button{background:var(--white);color:var(--green);font-weight:700;padding:10px 20px;border:3px solid transparent;font-size:1.1rem}
+.count button.on{border-color:var(--gold);background:var(--gold);color:#222}
+.names{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+.names label{display:flex;align-items:center;gap:8px;font-weight:700}
+.names input{flex:1;min-width:0;font:inherit;padding:9px 12px;border-radius:10px;border:2px solid #cdbf9f;background:#fff;color:#222}
+.dot{width:16px;height:16px;border-radius:50%;flex:none}
+.big{background:var(--red);color:#fff;font-weight:700;font-size:1.2rem;padding:14px 30px}
+.rules li{margin:.3rem 0}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.tag{display:inline-block;border-radius:999px;padding:4px 12px;color:#fff;font-weight:700;font-size:.9rem}
+.c-cari{background:var(--red)} .c-pintal{background:var(--green2)} .c-tenun{background:var(--blue)}
+
+/* game */
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top h1{font-size:1.5rem;color:var(--green)}
+@media (prefers-color-scheme: dark){.top h1{color:#cfe8d2}}
+.tools button{background:var(--green);color:#fff;padding:8px 14px;font-weight:700;margin-left:6px;font-size:.95rem}
+.tools button.alt{background:var(--gold);color:#222}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.team{background:var(--card);border-radius:16px;padding:10px 12px;border:4px solid transparent;position:relative}
+.team.turn{border-color:var(--gold);box-shadow:0 0 0 3px rgba(224,165,38,.35)}
+.team .n{font-weight:700;display:flex;align-items:center;gap:8px}
+.team .p{font-size:2rem;font-weight:700;font-family:Cambria,Georgia,serif}
+.team .adj{position:absolute;right:8px;top:8px;display:flex;gap:4px}
+.team .adj button{background:#fff;color:#222;width:28px;height:28px;border-radius:8px;font-weight:700;border:1px solid #cdbf9f;padding:0}
+.turnbar{background:var(--gold);color:#222;font-weight:700;border-radius:14px;padding:10px 16px;margin-bottom:12px;font-size:1.15rem}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:640px){.board{grid-template-columns:repeat(3,1fr)}}
+.tile{aspect-ratio:1.25;color:#fff;font-family:Cambria,Georgia,serif;font-weight:700;font-size:2.4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:18px;transition:transform .12s}
+.tile small{font-family:Calibri,Arial,sans-serif;font-size:.8rem;font-weight:700;opacity:.95}
+.tile:hover{transform:scale(1.04)}
+.tile.done{background:#9a9a9a!important;color:#eee;cursor:default;transform:none}
+.tile.done .mark{font-size:1.4rem}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,25,15,.78);display:flex;align-items:center;justify-content:center;padding:14px;z-index:10}
+.box{background:var(--bg);color:var(--ink);border-radius:22px;max-width:860px;width:100%;max-height:94vh;overflow:auto;padding:22px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.qtext{font-family:Cambria,Georgia,serif;font-size:1.7rem;font-weight:700;margin:12px 0 14px;line-height:1.25}
+.opts{display:grid;gap:10px}
+.opt{background:var(--card);color:var(--ink);text-align:left;padding:14px 16px;font-size:1.2rem;border:3px solid transparent;display:flex;gap:12px;align-items:flex-start}
+.opt b{background:var(--green);color:#fff;border-radius:50%;width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt.right{background:#2E7D32;color:#fff;border-color:#2E7D32}
+.opt.right b{background:#fff;color:#2E7D32}
+.opt.wrong{background:#B3261E;color:#fff;border-color:#B3261E}
+.opt.wrong b{background:#fff;color:#B3261E}
+.opt:disabled{cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{padding:10px 18px;font-weight:700;color:#fff;background:var(--green)}
+.btn.gold{background:var(--gold);color:#222}
+.btn.red{background:var(--red)}
+.hint{background:var(--gold);color:#222;border-radius:12px;padding:10px 14px;margin-top:12px;font-weight:700}
+.result{border-radius:14px;padding:14px 16px;margin-top:14px;background:var(--card)}
+.result h3{font-size:1.3rem;margin-bottom:4px}
+.bukti{font-style:italic;color:var(--red)}
+@media (prefers-color-scheme: dark){.bukti{color:#ffb4ab}}
+.text p{background:var(--card);border-radius:12px;padding:12px 14px;margin:8px 0}
+.text p.hl{outline:4px solid var(--gold)}
+.text .pn{font-weight:700;color:var(--red);display:block;font-size:.85rem}
+.rank{list-style:none;padding:0;margin:14px 0}
+.rank li{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:12px 16px;margin:8px 0;font-size:1.3rem}
+.rank li.win{background:var(--gold);color:#222}
+.rank .pos{font-family:Cambria,serif;font-weight:700;font-size:1.8rem;width:36px}
+.rank .sc{margin-left:auto;font-weight:700}
+.foot{color:var(--muted);font-size:.9rem;margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- LAYAR AWAL -->
+<div id="start">
+  <div class="hero">
+    <h1>Tantangan Penjaga Budaya</h1>
+    <p>Game kelas setelah kerja kelompok · Teks nonfiksi “Ulos dan Kain Tradisional Sumatera Utara” · Bahasa Indonesia Kelas 4</p>
+  </div>
+
+  <div class="panel">
+    <h2>1. Berapa tim yang bermain?</h2>
+    <div class="count" id="countBtns"></div>
+    <div class="names" id="names"></div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Cara bermain</h2>
+    <ol class="rules">
+      <li>Tim bergiliran memilih satu kartu bernomor di papan.</li>
+      <li>Baca soal, berdiskusi bersama tim, lalu pilih jawaban (A–D).</li>
+      <li>Jawaban benar mendapat <b>10 poin</b>. Memakai <b>petunjuk</b> akan mengurangi 3 poin (jadi 7).</li>
+      <li>Setelah dijawab, kelas melihat <b>bukti dari teks</b>, yaitu kalimat di teks yang menjawab soal.</li>
+      <li>Tim dengan poin terbanyak menjadi <b>Penjaga Budaya</b>.</li>
+    </ol>
+    <div class="legend">
+      <span class="tag c-cari">Menjawab Pertanyaan</span>
+      <span class="tag c-pintal">Menceritakan Kembali</span>
+      <span class="tag c-tenun">Menyimpulkan</span>
+    </div>
+  </div>
+
+  <div class="row" style="justify-content:center;margin:22px 0">
+    <button class="big" id="go">Mulai Permainan</button>
+  </div>
+  <div class="foot">Disusun untuk RPM Verawati Simamora · UPT SDN 066433 Medan Denai</div>
+</div>
+
+<!-- LAYAR GAME -->
+<div id="game" class="hidden">
+  <div class="top">
+    <h1>Tantangan Penjaga Budaya</h1>
+    <div class="tools">
+      <button class="alt" id="btnText">Lihat teks</button>
+      <button id="btnEnd">Akhiri</button>
+      <button id="btnReset">Ulang</button>
+    </div>
+  </div>
+  <div class="score" id="score"></div>
+  <div class="turnbar" id="turnbar"></div>
+  <div class="board" id="board"></div>
+  <div class="legend">
+    <span class="tag c-cari">Menjawab Pertanyaan</span>
+    <span class="tag c-pintal">Menceritakan Kembali</span>
+    <span class="tag c-tenun">Menyimpulkan</span>
+  </div>
+</div>
+
+</div>
+
+<!-- MODAL SOAL -->
+<div class="modal hidden" id="mQ"><div class="box" id="boxQ"></div></div>
+<!-- MODAL TEKS -->
+<div class="modal hidden" id="mT"><div class="box text" id="boxT"></div></div>
+<!-- MODAL HASIL -->
+<div class="modal hidden" id="mR"><div class="box" id="boxR"></div></div>
+
+<script>
+(function(){
+  var COLORS=["#B3261E","#2E7D32","#1F6F8B","#7B3F8C","#6B3A1E","#C98A00"];
+  var DEFAULT_NAMES=["Tim Ragidup","Tim Sadum","Tim Mangiring","Tim Songket","Tim Uis","Tim Hiou"];
+  var CATS={cari:{label:"Menjawab Pertanyaan",color:"#B3261E"},pintal:{label:"Menceritakan Kembali",color:"#2E7D32"},tenun:{label:"Menyimpulkan",color:"#1F6F8B"}};
+
+  var TEXT=[
+   "Pernahkah kamu melihat kain bergaris-garis berwarna merah, hitam, dan putih yang dikenakan pada acara adat? Kain itu bernama ulos. Ulos adalah kain tenun tradisional suku Batak di Sumatera Utara. Selain suku Batak, masyarakat lain di Sumatera Utara juga memiliki kain tradisional, misalnya uis pada masyarakat Karo, hiou pada masyarakat Simalungun, abit godang pada masyarakat Mandailing, dan songket pada masyarakat Melayu.",
+   "Ulos dibuat dengan cara ditenun. Benang disusun dan dianyam satu per satu menggunakan alat tenun tradisional. Pembuatannya membutuhkan waktu yang lama, kesabaran, dan ketelitian. Karena itu, selembar ulos sangat berharga.",
+   "Ulos bukan sekadar kain penghangat badan. Dalam adat Batak, ulos diberikan kepada orang lain sebagai tanda kasih sayang, doa, dan restu. Kegiatan ini disebut mangulosi. Ulos digunakan dalam berbagai upacara adat, seperti pernikahan dan kelahiran bayi.",
+   "Ulos memiliki banyak jenis, dan setiap jenis memiliki nama, motif, serta makna yang berbeda. Misalnya, ulos ragidup melambangkan kehidupan, sedangkan ulos sadum yang berwarna cerah melambangkan suka cita. Ulos mangiring melambangkan harapan agar kebaikan selalu mengiringi kehidupan anak-anak.",
+   "Sayangnya, kini semakin sedikit anak muda yang mengenal dan mau mengenakan kain tradisional. Banyak orang juga memilih kain buatan pabrik yang harganya lebih murah, sehingga para penenun kehilangan pembeli dan penghasilan. Jika hal ini terus terjadi, pengetahuan tentang cara menenun, motif, dan makna kain dapat hilang. Akibatnya, warisan budaya kita bisa punah.",
+   "Kita dapat melestarikan kain tradisional dengan mengenakannya pada acara-acara tertentu, mempelajari maknanya dari orang tua dan kakek-nenek, membeli kain tenun asli buatan pengrajin, serta menceritakannya kepada teman. Dengan begitu, budaya Sumatera Utara akan tetap lestari. Mari bangga dengan budaya kita!"
+  ];
+
+  /* Jawaban benar SELALU pada opsi pertama di data; urutan diacak saat ditampilkan. */
+  var Q=[
+   {c:"cari",p:1,q:"Ulos adalah kain tenun tradisional suku ....",o:["Batak","Karo","Melayu","Mandailing"],
+     b:"“Ulos adalah kain tenun tradisional suku Batak di Sumatera Utara.”",e:"Teks menyebut langsung bahwa ulos adalah kain tenun suku Batak."},
+   {c:"cari",p:1,q:"Kain tradisional masyarakat Simalungun disebut ....",o:["hiou","uis","abit godang","songket"],
+     b:"“hiou pada masyarakat Simalungun”",e:"Uis milik Karo, abit godang milik Mandailing, songket milik Melayu."},
+   {c:"cari",p:3,q:"Kegiatan memberikan ulos sebagai tanda kasih sayang, doa, dan restu disebut ....",o:["mangulosi","menenun","melestarikan","membeli"],
+     b:"“Kegiatan ini disebut mangulosi.”",e:"Mangulosi adalah memberikan ulos dalam adat Batak."},
+   {c:"cari",p:2,q:"Mengapa selembar ulos sangat berharga?",o:["Karena pembuatannya butuh waktu lama, kesabaran, dan ketelitian","Karena dibuat cepat dengan mesin pabrik","Karena hanya ada satu lembar di dunia","Karena tidak boleh dipakai siapa pun"],
+     b:"“Pembuatannya membutuhkan waktu yang lama, kesabaran, dan ketelitian.”",e:"Kata “Karena itu” di akhir paragraf 2 menunjukkan alasannya."},
+   {c:"cari",p:3,q:"Ulos digunakan pada upacara adat, misalnya ....",o:["pernikahan dan kelahiran bayi","pertandingan olahraga","ujian sekolah","pasar malam"],
+     b:"“Ulos digunakan dalam berbagai upacara adat, seperti pernikahan dan kelahiran bayi.”",e:"Teks menyebut dua contoh upacara adat tersebut."},
+   {c:"cari",p:4,q:"Ulos sadum yang berwarna cerah melambangkan ....",o:["suka cita","kehidupan","harapan bagi anak-anak","kesedihan"],
+     b:"“ulos sadum yang berwarna cerah melambangkan suka cita”",e:"Ragidup melambangkan kehidupan, mangiring melambangkan harapan kebaikan bagi anak-anak."},
+   {c:"cari",p:5,q:"Mengapa para penenun kehilangan pembeli dan penghasilan?",o:["Karena banyak orang memilih kain pabrik yang lebih murah","Karena ulos tidak boleh dijual","Karena menenun sangat mudah dan cepat","Karena semua orang sudah punya ulos"],
+     b:"“Banyak orang juga memilih kain buatan pabrik yang harganya lebih murah, sehingga para penenun kehilangan pembeli dan penghasilan.”",e:"Hubungan sebab-akibatnya: kain pabrik murah → pembeli kain tenun berkurang → penghasilan penenun turun."},
+   {c:"cari",p:5,q:"Apa akibatnya jika kain tradisional tidak dilestarikan?",o:["Pengetahuan tentang menenun, motif, dan makna kain dapat hilang","Kain tradisional semakin banyak dibuat","Semua orang pandai menenun","Budaya daerah semakin terkenal"],
+     b:"“Jika hal ini terus terjadi, pengetahuan tentang cara menenun, motif, dan makna kain dapat hilang.”",e:"Akibat terakhirnya, warisan budaya bisa punah."},
+
+   {c:"pintal",p:0,q:"Urutan isi teks yang benar adalah ....",o:["pengenalan ulos → cara membuat → mangulosi → jenis dan makna → akibat tidak dilestarikan → cara melestarikan","cara membuat → pengenalan ulos → akibat tidak dilestarikan → mangulosi → cara melestarikan → jenis dan makna","mangulosi → akibat tidak dilestarikan → pengenalan ulos → cara membuat → jenis dan makna → cara melestarikan","cara melestarikan → pengenalan ulos → mangulosi → cara membuat → akibat tidak dilestarikan → jenis dan makna"],
+     b:"Urutan paragraf 1 sampai 6 pada teks.",e:"Menceritakan kembali berarti mengikuti urutan isi teks dari awal sampai akhir."},
+   {c:"pintal",p:2,q:"Ulos ditenun dengan penuh kesabaran. ...., selembar ulos sangat berharga. Kata penghubung yang tepat adalah ....",o:["Karena itu","Namun","Sebelumnya","Dahulu"],
+     b:"“Karena itu, selembar ulos sangat berharga.”",e:"“Karena itu” menghubungkan sebab (proses menenun yang sulit) dengan akibat (ulos berharga)."},
+   {c:"pintal",p:3,q:"Cerita ulang paragraf 3 dengan kata-kata sendiri yang paling tepat adalah ....",o:["Ulos diberikan untuk menunjukkan kasih sayang, doa, dan restu dalam acara adat.","Ulos hanya dipakai untuk menghangatkan badan saat dingin.","Ulos dijual di pasar pada setiap acara adat.","Ulos dibuat oleh pengantin sebelum menikah."],
+     b:"“ulos diberikan kepada orang lain sebagai tanda kasih sayang, doa, dan restu”",e:"Cerita ulang memuat isi penting dengan bahasa sendiri, tanpa menambah hal yang tidak ada di teks."},
+   {c:"pintal",p:5,q:"Cerita ulang paragraf 5 yang paling tepat adalah ....",o:["Anak muda kurang mengenal kain tradisional dan orang memilih kain pabrik yang murah, sehingga penenun kehilangan penghasilan.","Anak muda sangat suka kain tradisional sehingga penenun semakin kaya.","Kain pabrik lebih bagus daripada kain tenun tradisional.","Para penenun berhenti menenun karena bosan."],
+     b:"“Sayangnya, kini semakin sedikit anak muda yang mengenal dan mau mengenakan kain tradisional.”",e:"Pilihan yang benar memuat masalah, sebab, dan akibat yang disebut teks."},
+
+   {c:"tenun",p:4,q:"Ide pokok paragraf 4 adalah ....",o:["Ulos memiliki banyak jenis dengan nama, motif, dan makna yang berbeda.","Ulos hanya berwarna merah, hitam, dan putih.","Ulos sadum paling mahal di antara semua ulos.","Ulos dibuat oleh anak-anak."],
+     b:"“Ulos memiliki banyak jenis, dan setiap jenis memiliki nama, motif, serta makna yang berbeda.”",e:"Kalimat pertama merangkum isi paragraf; kalimat berikutnya memberi contoh."},
+   {c:"tenun",p:0,q:"Kesimpulan yang paling tepat dari seluruh isi teks adalah ....",o:["Ulos dan kain tradisional lain di Sumatera Utara bermakna penting dan perlu kita lestarikan agar tidak punah.","Ulos hanya boleh dipakai oleh orang dewasa.","Kain buatan pabrik lebih baik daripada kain tradisional.","Menenun adalah pekerjaan yang mudah dan cepat."],
+     b:"Gabungan paragraf 1, 3, 5, dan 6: makna ulos, akibat tidak dijaga, ajakan melestarikan.",e:"Kesimpulan mencakup makna kain, akibat jika tidak dijaga, dan ajakan melestarikan."},
+   {c:"tenun",p:6,q:"Pesan yang dapat disimpulkan dari paragraf 6 adalah ....",o:["Kita harus ikut menjaga kain tradisional dengan memakainya, mempelajarinya, dan menceritakannya.","Kain tradisional cukup disimpan di lemari supaya awet.","Hanya penenun yang boleh menjaga kain tradisional.","Kain tradisional sebaiknya diganti kain pabrik."],
+     b:"“Kita dapat melestarikan kain tradisional dengan mengenakannya ..., mempelajari maknanya ..., membeli kain tenun asli ..., serta menceritakannya kepada teman.”",e:"Teks mengajak semua orang, termasuk anak-anak, untuk ikut melestarikan."}
+  ];
+  /* perbaikan nomor paragraf petunjuk: 0 = seluruh teks */
+  Q[8].p=0; Q[8].b="Urutan paragraf 1 sampai 6 pada teks.";
+  /* Q[9]: paragraf 2; Q[10]: paragraf 3; Q[11]: paragraf 5; Q[12]: paragraf 4 */
+  Q[9].p=2; Q[10].p=3; Q[11].p=5; Q[12].p=4; Q[13].p=0; Q[14].p=6;
+
+  var $=function(id){return document.getElementById(id)};
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+  function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+  var nTeams=3, teams=[], turn=0, status=[], cur=null, tileOrder=[];
+
+  /* ---------- Layar awal ---------- */
+  function drawStart(){
+    var cb=$("countBtns"); cb.innerHTML="";
+    for(var n=2;n<=6;n++){(function(n){
+      var b=document.createElement("button"); b.textContent=n+" tim"; if(n===nTeams)b.className="on";
+      b.onclick=function(){nTeams=n;drawStart()}; cb.appendChild(b);})(n)}
+    var box=$("names"), old=[];
+    var ins=box.querySelectorAll("input"); for(var k=0;k<ins.length;k++)old[k]=ins[k].value;
+    box.innerHTML="";
+    for(var i=0;i<nTeams;i++){
+      var l=document.createElement("label");
+      l.innerHTML='<span class="dot" style="background:'+COLORS[i]+'"></span><input maxlength="18" value="'+esc(old[i]||DEFAULT_NAMES[i])+'" aria-label="Nama tim '+(i+1)+'">';
+      box.appendChild(l);
+    }
+  }
+  $("go").onclick=function(){
+    var ins=$("names").querySelectorAll("input"); teams=[];
+    for(var i=0;i<nTeams;i++)teams.push({name:(ins[i].value.trim()||DEFAULT_NAMES[i]),score:0});
+    turn=0; status=Q.map(function(){return null});
+    /* acak posisi nomor kartu agar kategori bercampur */
+    tileOrder=shuffle(Q.map(function(_,i){return i}));
+    $("start").classList.add("hidden"); $("game").classList.remove("hidden");
+    drawGame();
+  };
+
+  /* ---------- Papan ---------- */
+  function drawScore(){
+    var s=$("score"); s.innerHTML="";
+    teams.forEach(function(t,i){
+      var d=document.createElement("div"); d.className="team"+(i===turn?" turn":"");
+      d.innerHTML='<div class="n"><span class="dot" style="background:'+COLORS[i]+'"></span>'+esc(t.name)+'</div><div class="p">'+t.score+'</div>'+
+        '<div class="adj"><button aria-label="Kurangi 1 poin">−</button><button aria-label="Tambah 1 poin">+</button></div>';
+      var bs=d.querySelectorAll("button");
+      bs[0].onclick=function(){t.score=Math.max(0,t.score-1);drawScore()};
+      bs[1].onclick=function(){t.score+=1;drawScore()};
+      s.appendChild(d);
+    });
+    $("turnbar").textContent="Giliran: "+teams[turn].name+" · pilih satu kartu";
+  }
+  function drawGame(){
+    drawScore();
+    var b=$("board"); b.innerHTML="";
+    tileOrder.forEach(function(qi,pos){
+      var q=Q[qi], t=document.createElement("button");
+      t.className="tile"; t.style.background=CATS[q.c].color;
+      if(status[qi]){
+        t.className+=" done"; t.disabled=true;
+        t.innerHTML='<span>'+(pos+1)+'</span><span class="mark">'+(status[qi]==="ok"?"✔":"✘")+'</span>';
+      }else{
+        t.innerHTML='<span>'+(pos+1)+'</span><small>'+CATS[q.c].label+'</small>';
+        t.onclick=function(){openQ(qi,pos+1)};
+      }
+      t.setAttribute("aria-label","Kartu "+(pos+1));
+      b.appendChild(t);
+    });
+  }
+
+  /* ---------- Soal ---------- */
+  function openQ(qi,num){
+    var q=Q[qi];
+    cur={qi:qi,num:num,hint:false,answered:false,opts:shuffle(q.o.map(function(t,i){return{t:t,ok:i===0}}))};
+    renderQ();
+    $("mQ").classList.remove("hidden");
+  }
+  function renderQ(){
+    var q=Q[cur.qi], L=["A","B","C","D"], h="";
+    h+='<div class="qhead"><span class="tag" style="background:'+CATS[q.c].color+'">Kartu '+cur.num+' · '+CATS[q.c].label+'</span><span><b>'+esc(teams[turn].name)+'</b> menjawab</span></div>';
+    h+='<div class="qtext">'+esc(q.q)+'</div><div class="opts">';
+    cur.opts.forEach(function(o,i){
+      var cls="opt", dis=cur.answered?" disabled":"";
+      if(cur.answered){ if(o.ok)cls+=" right"; else if(cur.pick===i)cls+=" wrong"; }
+      h+='<button class="'+cls+'" data-i="'+i+'"'+dis+'><b>'+L[i]+'</b><span>'+esc(o.t)+'</span></button>';
+    });
+    h+='</div>';
+    if(cur.hint&&!cur.answered){h+='<div class="hint">Petunjuk: '+(q.p?'cari jawabannya di paragraf '+q.p+'.':'perhatikan urutan paragraf 1 sampai 6.')+' (nilai soal jadi 7)</div>';}
+    if(!cur.answered){
+      h+='<div class="row"><button class="btn gold" id="bHint"'+(cur.hint?" disabled":"")+'>Petunjuk (−3)</button><button class="btn" id="bTxt">Lihat teks</button><button class="btn red" id="bBack">Kembali ke papan</button></div>';
+    }else{
+      var pts=cur.ok?(cur.hint?7:10):0;
+      h+='<div class="result"><h3>'+(cur.ok?'Benar! +'+pts+' poin untuk '+esc(teams[turn].name):'Belum tepat. Tidak ada poin.')+'</h3>'+
+         '<div><b>Bukti dari teks:</b> <span class="bukti">'+esc(q.b)+'</span></div><div style="margin-top:6px">'+esc(q.e)+'</div></div>'+
+         '<div class="row"><button class="btn" id="bTxt">Lihat teks</button><button class="btn gold" id="bNext">Lanjut ke tim berikutnya</button></div>';
+    }
+    $("boxQ").innerHTML=h;
+    var os=$("boxQ").querySelectorAll(".opt");
+    for(var i=0;i<os.length;i++)(function(i){os[i].onclick=function(){answer(i)}})(i);
+    if($("bHint"))$("bHint").onclick=function(){cur.hint=true;renderQ()};
+    if($("bTxt"))$("bTxt").onclick=function(){showText(Q[cur.qi].p)};
+    if($("bBack"))$("bBack").onclick=function(){$("mQ").classList.add("hidden");cur=null};
+    if($("bNext"))$("bNext").onclick=function(){
+      $("mQ").classList.add("hidden"); cur=null;
+      turn=(turn+1)%teams.length; drawGame();
+      if(status.every(function(s){return s})) finish();
+    };
+  }
+  function answer(i){
+    if(cur.answered)return;
+    cur.answered=true; cur.pick=i; cur.ok=cur.opts[i].ok;
+    status[cur.qi]=cur.ok?"ok":"no";
+    if(cur.ok)teams[turn].score+=(cur.hint?7:10);
+    renderQ(); drawScore();
+  }
+
+  /* ---------- Teks ---------- */
+  function showText(hl){
+    var h='<div class="qhead"><h2 style="color:var(--green2)">Ulos dan Kain Tradisional Sumatera Utara</h2><button class="btn red" id="tClose">Tutup</button></div>';
+    TEXT.forEach(function(p,i){h+='<p'+(hl===i+1?' class="hl" id="hlp"':'')+'><span class="pn">Paragraf '+(i+1)+'</span>'+esc(p)+'</p>'});
+    $("boxT").innerHTML=h; $("mT").classList.remove("hidden");
+    $("tClose").onclick=function(){$("mT").classList.add("hidden")};
+    var e=$("hlp"); if(e)e.scrollIntoView({block:"center"});
+  }
+  $("btnText").onclick=function(){showText(0)};
+
+  /* ---------- Akhir ---------- */
+  function finish(){
+    var r=teams.map(function(t,i){return{n:t.name,s:t.score,i:i}}).sort(function(a,b){return b.s-a.s});
+    var top=r[0].s, h='<h2 style="font-size:1.8rem;color:var(--green2)">Hasil Akhir</h2>';
+    var winners=r.filter(function(x){return x.s===top}).map(function(x){return esc(x.n)}).join(" & ");
+    h+='<p style="font-size:1.3rem;margin:.4rem 0">Penjaga Budaya: <b>'+winners+'</b></p><ul class="rank">';
+    r.forEach(function(x,k){h+='<li class="'+(x.s===top?'win':'')+'"><span class="pos">'+(k+1)+'</span><span class="dot" style="background:'+COLORS[x.i]+'"></span>'+esc(x.n)+'<span class="sc">'+x.s+' poin</span></li>'});
+    h+='</ul><p>Semua tim hebat! Ingat janji kita: memakai, mempelajari, dan menceritakan kain daerah masing-masing.</p>'+
+       '<div class="row"><button class="btn gold" id="rAgain">Main lagi</button><button class="btn" id="rClose">Tutup</button></div>';
+    $("boxR").innerHTML=h; $("mR").classList.remove("hidden");
+    $("rAgain").onclick=function(){$("mR").classList.add("hidden");resetAll()};
+    $("rClose").onclick=function(){$("mR").classList.add("hidden")};
+  }
+  $("btnEnd").onclick=finish;
+  function resetAll(){
+    $("game").classList.add("hidden"); $("start").classList.remove("hidden"); drawStart();
+  }
+  $("btnReset").onclick=function(){ if(confirm("Ulang permainan dari awal?"))resetAll(); };
+
+  drawStart();
+})();
+</script>
+</body>
+</html>
